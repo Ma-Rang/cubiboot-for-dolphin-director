@@ -4,6 +4,10 @@ This is a fork of [cubeboot](https://github.com/OffBroadway/cubeboot) by [TeamOf
 
 If you have questions regarding this fork you can join the [Discord server](https://discord.gg/YtA9aU3BKZ)!
 
+> [!IMPORTANT]
+> Format your SD card using exFat (Not FAT32).\
+> Currently loading of files is very slow when using FAT32 formatted SD cards.
+
 ## Installation - [PicoLoader](https://github.com/makeo/PicoLoader)
 1. Download the [```cubiboot_picoloader.uf2```](https://github.com/makeo/cubiboot/releases/latest/download/cubiboot_picoloader.uf2) file
 2. Hold down the button on the RP Pico whilst plugging it into your PC
@@ -29,8 +33,7 @@ Files and the config have to be stored on a separate SD2SP2, SD Gecko or similar
 ODEs besides PicoLoader are not supported, and issues specific to these devices might not be fixed.
 
 ## Known Bugs
-- loading of files is slow when scrolling/changing directories
-- In-game reset causes GameCube to freeze up for some games
+- loading of files is very slow when using FAT32
 - cube_logo option does not work
 - button_* options to not work (use gekkoboot for this functionality instead)
 - no PicoBoot uf2
