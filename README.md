@@ -1,49 +1,39 @@
-# cubiboot
+# cubiboot for Dolphin Consolizer
 
-This is a fork of [cubeboot](https://github.com/OffBroadway/cubeboot) by [TeamOffBroadway](https://github.com/OffBroadway) with support for SD2SP2, SD Gecko or similar SD adapters.
+A fork of [cubiboot](https://github.com/makeo/cubiboot) (itself a fork of [cubeboot](https://github.com/OffBroadway/cubeboot)) modified for use with [Dolphin Consolizer](https://github.com/Ma-Rang/dolphin-consolizer). It provides a GameCube BIOS replacement menu that displays game artwork with animated icons, lets the user pick a game, then signals Consolizer to boot it.
 
-If you have questions regarding this fork you can join the [Discord server](https://discord.gg/YtA9aU3BKZ)!
+## Changes from upstream cubiboot
 
-> [!IMPORTANT]
-> Format your SD card using exFat (Not FAT32).\
-> Currently loading of files is very slow when using FAT32 formatted SD cards.
+- Game list metadata embedded in the DOL by Consolizer's `dol_patcher.py`; visual assets (banners, animated save icons) streamed over USB Gecko at boot
+- USB Gecko communication link for asset streaming and sending the selected game back to Consolizer
+- Runs entirely in the Dolphin emulator — real hardware is not supported
 
-## Installation - [PicoLoader](https://github.com/makeo/PicoLoader)
-1. Download the [```cubiboot_picoloader.uf2```](https://github.com/makeo/cubiboot/releases/latest/download/cubiboot_picoloader.uf2) file
-2. Hold down the button on the RP Pico whilst plugging it into your PC
-3. Copy the .uf2 file to the USB drive
-4. Download the [latest Swiss](https://github.com/emukidid/swiss-gc/releases/latest) dol
-5. Rename the Swiss dol to ```swiss-gc.dol``` and place it on your SD card
+## How it works
 
-## Installation - [PicoLoader](https://github.com/makeo/PicoLoader)/[PicoBoot](https://github.com/webhdx/PicoBoot) with gekkoboot payload
-1. Download the [```cubiboot.dol```](https://github.com/makeo/cubiboot/releases/latest/download/cubiboot.dol)
-2. Rename it to ```ipl.dol```
-3. Copy the ```ipl.dol``` onto your SD card
-4. Download the [latest Swiss](https://github.com/emukidid/swiss-gc/releases/latest) dol
-5. Rename the Swiss dol to ```swiss-gc.dol``` and place it on your SD card
+1. Consolizer patches a GameCube IPL ROM using `gc_ipl_patcher`, embedding this fork's code, the IPL, and a lightweight game list (IDs, titles, descriptions)
+2. Dolphin boots the patched IPL as its GC BIOS
+3. The menu loads immediately with placeholder art, then Consolizer streams banners and animated save icons over USB Gecko — the emulated Gecko is fast enough that this is near-instant
+4. When the user selects a game, a 2-byte LAUNCH command is sent over USB Gecko to Consolizer, which tells Dolphin to boot it
 
-## Using In-Game Reset
-1. Download [```EXTRACT_TO_ROOT.zip```](https://github.com/makeo/cubiboot/releases/latest/download/EXTRACT_TO_ROOT.zip)
-2. Extract the contents to the root of the SD card
-3. Pressing Z + A + START whilst in a game brings you back to the cubiboot menu
+## Building
 
-## Other ODEs (e.g. GC Loader)
-Download the [```cubiboot.iso```](https://github.com/makeo/cubiboot/releases/latest/download/cubiboot.iso) and use it as appropriate for your ODE.\
-Files and the config have to be stored on a separate SD2SP2, SD Gecko or similar SD adapter.\
-ODEs besides PicoLoader are not supported, and issues specific to these devices might not be fixed.
+Requires [devkitPPC](https://devkitpro.org/) (part of devkitPro) with libogc2.
 
-## Known Bugs
-- loading of files is very slow when using FAT32
-- cube_logo option does not work
-- button_* options to not work (use gekkoboot for this functionality instead)
-- no PicoBoot uf2
+Build order: patches first, then cubeboot (which embeds `patches.elf`).
 
-## Special Thanks
-- [TeamOffBroadway](https://github.com/OffBroadway) for creating cubeboot
-- [Extrems](https://github.com/Extrems), [emukidid](https://github.com/emukidid) and everyone involved in creating Swiss
+```
+./build.sh
+```
+
+Output: `cubeboot/cubeboot.dol`
+
+## License
+
+GPL-2.0-or-later — see [CREDIT.md](CREDIT.md) for full acknowledgements.
 
 ## Acknowledgements
-- [cubeboot](https://github.com/OffBroadway/cubeboot) (GPL-2.0)
+
+- [cubeboot](https://github.com/OffBroadway/cubeboot) by [TeamOffBroadway](https://github.com/OffBroadway) (GPL-2.0)
+- [cubiboot](https://github.com/makeo/cubiboot) by [makeo](https://github.com/makeo) (GPL-2.0)
 - [apploader](https://github.com/makeo/cubeboot-tools) (GPL-2.0)
 - [packer](https://github.com/emukidid/swiss-gc/tree/master/cube/packer) for apploader.img (GPL-2.0)
-- For more, see [CREDIT.md](https://github.com/makeo/cubiboot/blob/main/CREDIT.md)
